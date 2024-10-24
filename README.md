@@ -1,7 +1,7 @@
 # GlobeWire News
 
 **GlobeWire News** is a real-time news website that allows users to search and view news articles. The website fetches news data dynamically and presents it in an easily digestible format for users. This project is built using HTML, CSS, and JavaScript, and serves as a template for displaying blogs or news articles.
-## Click here to see the Website: [**Click Here**]()
+## Click here to see the Website: [**Click Here**](https://chandan-1824.github.io/News-Website/)
 ## Features
 
 - **Dynamic News Feed**: Displays the latest news articles in a card-based layout with images, titles, and descriptions.
