@@ -5,35 +5,19 @@ const searchButton = document.getElementById("search-button");
 
 async function fetchRandomNews() {
     try {
-        const apiUrl = `https://newsapi.org/v2/top-headlines?sources=techcrunch&pageSize=16&apikey=${apikey}`;
-
+        const apiUrl = `https://cors-anywhere.herokuapp.com/https://newsapi.org/v2/top-headlines?sources=techcrunch&pageSize=16&apikey=${apikey}`;
         const response = await fetch(apiUrl);
-        console.log("API response for random news:", response);
-
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
-
         const data = await response.json();
-        console.log("Parsed data for random news:", data);
-
-        if (!Array.isArray(data.articles)) {
-            console.error("Error: Articles is not an array");
-            return [];
-        }
-
-        if (!data.articles || data.articles.length === 0) {
-            console.log("No articles found in API response");
-            return [];
-        }
-
         return data.articles;
-
     } catch (error) {
         console.error("Error fetching random news", error);
         return [];
     }
 }
+
 
 searchButton.addEventListener("click", async () => {
     const query = searchField.value.trim();
