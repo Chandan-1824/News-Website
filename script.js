@@ -1,56 +1,97 @@
-const apikey ='95d699331d9844dfa4518eec26874aa8';
+const apikey = '95d699331d9844dfa4518eec26874aa8';
 const blogContainer = document.getElementById("blog-container");
 const searchField = document.getElementById('search-input');
 const searchButton = document.getElementById("search-button");
 
-
-
-async function fetchRandomNews (){
-    try{
+async function fetchRandomNews() {
+    try {
         const apiUrl = `https://newsapi.org/v2/top-headlines?sources=techcrunch&pageSize=16&apikey=${apikey}`;
 
         const response = await fetch(apiUrl);
+        console.log("API response for random news:", response);
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
         const data = await response.json();
+        console.log("Parsed data for random news:", data);
+
+        if (!Array.isArray(data.articles)) {
+            console.error("Error: Articles is not an array");
+            return [];
+        }
+
+        if (!data.articles || data.articles.length === 0) {
+            console.log("No articles found in API response");
+            return [];
+        }
+
         return data.articles;
-      
-    }catch(error){
-      console.error("Error fetching random news", error);
-      return [];
+
+    } catch (error) {
+        console.error("Error fetching random news", error);
+        return [];
     }
 }
 
-searchButton.addEventListener("click", async ()=>{
+searchButton.addEventListener("click", async () => {
     const query = searchField.value.trim();
-    if(query !== ""){
-       try{
-          const articles = await fetchNewsQuery(query);
-
-          displayBlogs(articles);
-
-       }catch(error){
-        console.log("Error Fetching News By query", error);
-       }
+    if (query !== "") {
+        try {
+            const articles = await fetchNewsQuery(query);
+            console.log("Articles fetched for search:", articles);
+            displayBlogs(articles);
+        } catch (error) {
+            console.log("Error fetching news by query", error);
+        }
     }
 });
 
-async function fetchNewsQuery(query){
-    try{
+async function fetchNewsQuery(query) {
+    try {
         const apiUrl = `https://newsapi.org/v2/everything?q=${query}&pageSize=16&apikey=${apikey}`;
 
         const response = await fetch(apiUrl);
+        console.log("API response for search query:", response);
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
         const data = await response.json();
+        console.log("Parsed data for search query:", data);
+
+        if (!Array.isArray(data.articles)) {
+            console.error("Error: Articles is not an array");
+            return [];
+        }
+
+        if (!data.articles || data.articles.length === 0) {
+            console.log("No articles found for search query");
+            return [];
+        }
+
         return data.articles;
-      
-    }catch(error){
-      console.error("Error fetching random news", error);
-      return [];
+
+    } catch (error) {
+        console.error("Error fetching news by query", error);
+        return [];
     }
 }
 
-function displayBlogs(articles){
+function displayBlogs(articles) {
+    console.log("Articles passed to displayBlogs:", articles);
+
     blogContainer.innerHTML = "";
-    articles.forEach( (article) => {
-      
+
+    if (!articles || articles.length === 0) {
+        console.log("No articles to display");
+        blogContainer.innerHTML = "<p>No news articles found.</p>";
+        return;
+    }
+
+    articles.forEach((article) => {
         const blogCard = document.createElement("div");
         blogCard.classList.add("blog-card");
 
@@ -59,37 +100,30 @@ function displayBlogs(articles){
         img.alt = article.title;
 
         const title = document.createElement("h2");
-        // title.textContent = article.title;
-        const TruncatedTitle = article.title.length>60? article.title.slice(0, 60) + "....." : article.title;
+        const TruncatedTitle = article.title.length > 60 ? article.title.slice(0, 60) + "....." : article.title;
         title.textContent = TruncatedTitle;
 
         const paragraph = document.createElement("p");
         paragraph.textContent = article.description;
-        // const shortPara = article.paragraph.length>100? article.paragraph.slice(0, 100) + ".....Click to See more" : article.paragraph;
-        // paragraph.textContent = shortPara;
-        
 
         blogCard.appendChild(img);
         blogCard.appendChild(title);
         blogCard.appendChild(paragraph);
 
-        blogCard.addEventListener('click', ()=>{
+        blogCard.addEventListener('click', () => {
             window.open(article.url, "_blank");
         });
 
         blogContainer.appendChild(blogCard);
     });
-    }
-
+}
 
 (async () => {
-    try{
-     const articles =  await fetchRandomNews();
-     displayBlogs(articles);
-
-    }catch(error){
-       console.error("Error fetching random news",error);
+    try {
+        const articles = await fetchRandomNews();
+        console.log("Articles received for display:", articles);
+        displayBlogs(articles);
+    } catch (error) {
+        console.error("Error fetching random news", error);
     }
 })();
-// (); This symbol is used to call this async function.
-
