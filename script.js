@@ -50,39 +50,35 @@ async function fetchNewsQuery(query){
     }
 }
 
-function displayBlogs(articles){
+function displayBlogs(articles) {
     blogContainer.innerHTML = "";
-    articles.forEach( (article) => {
-      
+    articles.forEach((article) => {
         const blogCard = document.createElement("div");
         blogCard.classList.add("blog-card");
 
+        // Update image source based on the actual response property
         const img = document.createElement("img");
-        img.src = article.urlToImage || 'default-path-of-the-image';
-        img.alt = article.title;
+        img.src = article.image || 'images/default-image.jpg'; // Ensure this property matches the API response
+        img.alt = article.title || "News Image";
 
         const title = document.createElement("h2");
-        // title.textContent = article.title;
-        const TruncatedTitle = article.title.length>60? article.title.slice(0, 60) + "....." : article.title;
+        const TruncatedTitle = article.title.length > 60 ? article.title.slice(0, 60) + "....." : article.title;
         title.textContent = TruncatedTitle;
 
         const paragraph = document.createElement("p");
-        paragraph.textContent = article.description;
-        // const shortPara = article.paragraph.length>100? article.paragraph.slice(0, 100) + ".....Click to See more" : article.paragraph;
-        // paragraph.textContent = shortPara;
-        
+        paragraph.textContent = article.description || "No description available."; // Fallback for missing descriptions
 
         blogCard.appendChild(img);
         blogCard.appendChild(title);
         blogCard.appendChild(paragraph);
 
-        blogCard.addEventListener('click', ()=>{
+        blogCard.addEventListener('click', () => {
             window.open(article.url, "_blank");
         });
 
         blogContainer.appendChild(blogCard);
     });
-    }
+}
 
 
 (async () => {
