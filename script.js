@@ -8,53 +8,39 @@ async function fetchRandomNews() {
         const apiUrl = `https://newsapi.org/v2/top-headlines?sources=techcrunch&pageSize=16&apikey=${apikey}`;
 
         const response = await fetch(apiUrl);
-        const data = await response.json();
-        console.log("API Response for Random News:", data);  // Add this to see the full API response
+        console.log("API response object for random news:", response);
 
-        // Check if articles exist in the response
-        if (!data.articles) {
-            console.error("No articles found in the response");
-            return [];
-        }
-
-        return data.articles;async function fetchRandomNews() {
-    try {
-        const apiUrl = `https://newsapi.org/v2/top-headlines?sources=techcrunch&pageSize=16&apikey=${apikey}`;
-        const response = await fetch(apiUrl);
-        
-        console.log("Full API response:", response);
+        // Check if response is successful
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
         const data = await response.json();
-        console.log("Parsed data:", data);
+        console.log("Parsed data for random news:", data);
 
-        // Check if articles exist
-        if (!data.articles) {
+        // Check if articles exist in the response
+        if (!data.articles || data.articles.length === 0) {
             console.error("No articles found in the response");
             return [];
         }
 
         return data.articles;
-      
+
     } catch (error) {
         console.error("Error fetching random news", error);
         return [];
     }
 }
 
-
+// Search functionality
 searchButton.addEventListener("click", async () => {
     const query = searchField.value.trim();
     if (query !== "") {
         try {
             const articles = await fetchNewsQuery(query);
-
             displayBlogs(articles);
-
         } catch (error) {
-            console.log("Error Fetching News By query", error);
+            console.log("Error fetching news by query", error);
         }
     }
 });
@@ -64,11 +50,18 @@ async function fetchNewsQuery(query) {
         const apiUrl = `https://newsapi.org/v2/everything?q=${query}&pageSize=16&apikey=${apikey}`;
 
         const response = await fetch(apiUrl);
+        console.log("API Response for Search Query:", response);
+
+        // Check if response is successful
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
         const data = await response.json();
-        console.log("API Response for Search Query:", data);  // Add this to see the search response
+        console.log("Parsed data for search query:", data);
 
         // Check if articles exist in the response
-        if (!data.articles) {
+        if (!data.articles || data.articles.length === 0) {
             console.error("No articles found for query");
             return [];
         }
@@ -84,7 +77,7 @@ async function fetchNewsQuery(query) {
 function displayBlogs(articles) {
     blogContainer.innerHTML = "";
 
-    // Add check for empty or undefined articles array
+    // Check if articles is undefined or empty
     if (!articles || articles.length === 0) {
         blogContainer.innerHTML = "<p>No news articles found.</p>";
         return;
@@ -121,8 +114,8 @@ function displayBlogs(articles) {
 (async () => {
     try {
         const articles = await fetchRandomNews();
+        console.log("Articles received for display:", articles);
         displayBlogs(articles);
-
     } catch (error) {
         console.error("Error fetching random news", error);
     }
